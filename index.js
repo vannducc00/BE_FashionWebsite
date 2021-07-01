@@ -93,7 +93,8 @@ app.get("/Mensellection", cors(), function (req, res) {
 
 });
 
-app.get("/Detail", cors(), function (req, res) {
+app.get("/detail", cors(), function (req, res) {
+    console.log(req.query);
     const con = mysql.createConnection(
         {
             host: "localhost",
@@ -111,7 +112,7 @@ app.get("/Detail", cors(), function (req, res) {
                 "------------------------------Connect Success!!!!!!!!------------------------------"
             );
             try {
-                con.query("SELECT product.*,color_id.color_pr,image_id.image_url FROM product,color_id,image_id WHERE product.id = color_id.id AND product.id = image_id.id AND product.id = 1", [], function (err, result) {
+                con.query("SELECT product.*,color_id.color_pr,image_id.image_url FROM product,color_id,image_id WHERE product.id = color_id.id AND product.id = image_id.id AND product.id = " + req.query.product, [], function (err, result) {
                     console.log("EXECUTE");
                     if (err) {
                         console.log("DONE");

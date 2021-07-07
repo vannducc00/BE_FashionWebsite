@@ -30,7 +30,7 @@ app.post("/signup", cors(), function (req, res) {
                 "------------------------------ !!! Connect Success !!!------------------------------"
             );
             try {
-                console.log("INSERT INTO `customer`( `phone`, `user_name`, `password`) VALUES ('" + req.body.phone + "','" + req.body.username + "','" + req.body.password + "')");
+                // console.log("INSERT INTO `customer`( `phone`, `user_name`, `password`) VALUES ('" + req.body.phone + "','" + req.body.username + "','" + req.body.password + "')");
                 con.query("INSERT INTO `customer`( `phone`, `user_name`, `password`) VALUES ('" + req.body.phone + "','" + req.body.username + "','" + req.body.password + "')",
                     [], function (err) {
                         console.log("EXECUTE");
@@ -52,7 +52,44 @@ app.post("/signup", cors(), function (req, res) {
     })
 })
 
-
+app.post("/addtobag", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        {
+            host: "localhost",
+            user: "root",
+            password: "123",
+            database: "web_sell_db"
+        });
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("INSERT INTO `customer`( `phone`, `user_name`, `password`) VALUES ('" + req.body.phone + "','" + req.body.username + "','" + req.body.password + "')",
+                    [], function (err) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
 // ---------------------------------------------------------------------
 
 app.get("/handbag", cors(), function (req, res) {
@@ -221,6 +258,177 @@ app.get("/relatedProductList", cors(), function (req, res) {
                             //     }
                             // })
                             res.send(result);
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+});
+
+app.get("/productMen", cors(), function (req, res) {
+    console.log(req);
+    const con = mysql.createConnection(
+        {
+            host: "localhost",
+            user: "root",
+            password: "123",
+            database: "web_sell_db"
+        });
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------Connect Success!!!!!!!!------------------------------"
+            );
+            try {
+                con.query("SELECT * FROM `product` WHERE type_gender_id = 1",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                            res.send(result);
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+});
+
+app.get("/productWomen", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        {
+            host: "localhost",
+            user: "root",
+            password: "123",
+            database: "web_sell_db"
+        });
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------Connect Success!!!!!!!!------------------------------"
+            );
+            try {
+                con.query("SELECT * FROM `product` WHERE type_gender_id = 2",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                            res.send(result);
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+});
+
+app.post("/checksignup", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        {
+            host: "localhost",
+            user: "root",
+            password: "123",
+            database: "web_sell_db"
+        });
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------Connect Success!!!!!!!!------------------------------"
+            );
+            try {
+                con.query("SELECT * FROM `customer` WHERE user_name = " + "'" + req.body.username + "'",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+
+                            // if (result.length == 0) {
+                            //     res.send(true)
+                            // } else {
+                            //     res.send(false)
+                            // };
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+});
+
+app.post("/checksignin", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        {
+            host: "localhost",
+            user: "root",
+            password: "123",
+            database: "web_sell_db"
+        });
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------Connect Success!!!!!!!!------------------------------"
+            );
+            try {
+                con.query("SELECT * FROM `customer` WHERE user_name = " + "'" + req.body.username + "'" + "'" + req.body.password + "'",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+
+                            if (result.length == 0) {
+                                res.send(false)
+                            } else {
+                                res.send(true)
+                            };
                         }
                     });
             } catch (err) {

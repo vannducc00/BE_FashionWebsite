@@ -140,7 +140,7 @@ app.post("/checksignin", cors(), function (req, res) {
     })
 });
 
-app.post("/addtobag", cors(), function (req, res) {
+app.post("/addtocart", cors(), function (req, res) {
     const con = mysql.createConnection(
         {
             host: "localhost",
@@ -158,8 +158,8 @@ app.post("/addtobag", cors(), function (req, res) {
                 "------------------------------ !!! Connect Success !!!------------------------------"
             );
             try {
-                con.query("INSERT INTO `cart`( `customer_id`, `product_id`, `quantity`, `price`, `color`, `size`, `amount`) VALUES ('[value-2]','[value-3]','[value-4]','[value-5]','[value-6]','[value-7]','[value-8]') ",
-                    [], function (err) {
+                con.query("INSERT INTO `cart`( `customer_id`, `product_id`, `quantity`, `color`, `size`) VALUES ('" + req.body.customer_id + "','" + req.body.product_id + "','" + req.body.quantity + "','" + req.body.color + "','" + req.body.size + "') ",
+                    [], function (err, result) {
                         console.log("EXECUTE");
                         if (err) {
                             console.log("DONE");
@@ -170,6 +170,7 @@ app.post("/addtobag", cors(), function (req, res) {
                                 if (err) console.log(err);
                                 console.log("Connect Closed");
                             });
+                            res.send(result)
                         }
                     });
             } catch (err) {
@@ -437,5 +438,44 @@ app.get("/productWomen", cors(), function (req, res) {
     })
 });
 
+app.get("/selecttocart", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        {
+            host: "localhost",
+            user: "root",
+            password: "123",
+            database: "web_sell_db"
+        });
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("SELECT * FROM 'cart' ",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
 
 app.listen(8080);

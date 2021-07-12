@@ -158,7 +158,7 @@ app.post("/addtocart", cors(), function (req, res) {
                 "------------------------------ !!! Connect Success !!!------------------------------"
             );
             try {
-                con.query("INSERT INTO `cart`( `customer_id`, `product_id`, `quantity`, `color`, `size`) VALUES ('" + req.body.customer_id + "','" + req.body.product_id + "','" + req.body.quantity + "','" + req.body.color + "','" + req.body.size + "') ",
+                con.query("INSERT INTO `cart`( `customer_id`, `product_id`, `name`, `Image`, `quantity`, `color`, `size`,`amount`) VALUES ('" + req.body.customer_id + "','" + req.body.product_id + "','" + req.body.nameProduct + "','" + req.body.imagePro + "','" + req.body.quantity + "','" + req.body.color + "','" + req.body.size + "','" + req.body.amount + "') ",
                     [], function (err, result) {
                         console.log("EXECUTE");
                         if (err) {
@@ -170,7 +170,50 @@ app.post("/addtocart", cors(), function (req, res) {
                                 if (err) console.log(err);
                                 console.log("Connect Closed");
                             });
+
                             res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+app.post("/remoteproductcart", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        {
+            host: "localhost",
+            user: "root",
+            password: "123",
+            database: "web_sell_db"
+        });
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query(" DELETE FROM `cart` WHERE id_cart = " + req.body.id_cart,
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) {
+                                    console.log(err);
+                                    res.send(false)
+                                }
+                            });
+                            res.send(true)
                         }
                     });
             } catch (err) {
@@ -438,7 +481,7 @@ app.get("/productWomen", cors(), function (req, res) {
     })
 });
 
-app.get("/selecttocart", cors(), function (req, res) {
+app.get("/searchproduct", cors(), function (req, res) {
     const con = mysql.createConnection(
         {
             host: "localhost",
@@ -456,7 +499,87 @@ app.get("/selecttocart", cors(), function (req, res) {
                 "------------------------------ !!! Connect Success !!!------------------------------"
             );
             try {
-                con.query("SELECT * FROM 'cart' ",
+                con.query("SELECT id, name, price, Image FROM `product`",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+app.get("/showcart", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        {
+            host: "localhost",
+            user: "root",
+            password: "123",
+            database: "web_sell_db"
+        });
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("SELECT * FROM `cart` WHERE customer_id =" + req.query.customer_id + "",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+app.post("/countcart", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        {
+            host: "localhost",
+            user: "root",
+            password: "123",
+            database: "web_sell_db"
+        });
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("SELECT COUNT(*) count_pro FROM `cart` WHERE customer_id =" + req.body.customer_id,
                     [], function (err, result) {
                         console.log("EXECUTE");
                         if (err) {

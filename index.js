@@ -499,7 +499,8 @@ app.get("/searchproduct", cors(), function (req, res) {
                 "------------------------------ !!! Connect Success !!!------------------------------"
             );
             try {
-                con.query("SELECT id, name, price, Image FROM `product`",
+                console.log(req.query);
+                con.query("SELECT id, name, price, Image FROM `product` WHERE name like '%" + req.query.namePro + "%'",
                     [], function (err, result) {
                         console.log("EXECUTE");
                         if (err) {

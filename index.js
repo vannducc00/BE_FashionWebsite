@@ -13,7 +13,7 @@ app.post("/signup", cors(), function (req, res) {
             host: "localhost",
             user: "root",
             password: "123",
-            database: "web_sell_db"
+            database: "sells_db"
         });
     con.connect(function (err) {
         if (err) {
@@ -52,7 +52,7 @@ app.post("/checksignup", cors(), function (req, res) {
             host: "localhost",
             user: "root",
             password: "123",
-            database: "web_sell_db"
+            database: "sells_db"
         });
     con.connect(function (err) {
         if (err) {
@@ -97,7 +97,7 @@ app.post("/checksignin", cors(), function (req, res) {
             host: "localhost",
             user: "root",
             password: "123",
-            database: "web_sell_db"
+            database: "sells_db"
         });
     con.connect(function (err) {
         if (err) {
@@ -119,7 +119,7 @@ app.post("/checksignin", cors(), function (req, res) {
                         } else {
                             con.end(function (err) {
                                 if (err) console.log(err);
-                                console.log("Connect Closed");
+                                console.log("-------------------- Connect Closed --------------------");
                             });
 
                             console.log(result);
@@ -130,7 +130,6 @@ app.post("/checksignin", cors(), function (req, res) {
                                 let newObj = { id: result[0].id }
                                 res.send(newObj)
                             };
-
                         }
                     });
             } catch (err) {
@@ -146,7 +145,7 @@ app.post("/addtocart", cors(), function (req, res) {
             host: "localhost",
             user: "root",
             password: "123",
-            database: "web_sell_db"
+            database: "sells_db"
         });
     con.connect(function (err) {
         if (err) {
@@ -158,7 +157,7 @@ app.post("/addtocart", cors(), function (req, res) {
                 "------------------------------ !!! Connect Success !!!------------------------------"
             );
             try {
-                con.query("INSERT INTO `cart`( `customer_id`, `product_id`, `name`, `Image`, `quantity`, `color`, `size`,`amount`) VALUES ('" + req.body.customer_id + "','" + req.body.product_id + "','" + req.body.nameProduct + "','" + req.body.imagePro + "','" + req.body.quantity + "','" + req.body.color + "','" + req.body.size + "','" + req.body.amount + "') ",
+                con.query("INSERT INTO `cart`( `customer_id`, `product_id`, `name`, `Image`,`type_pr_id`, `quantity`, `color`, `size`,`amount`,`create_date`) VALUES ('" + req.body.customer_id + "','" + req.body.product_id + "','" + req.body.nameProduct + "','" + req.body.imagePro + "','" + req.body.type_pr_id + "','" + req.body.quantity + "','" + req.body.color + "','" + req.body.size + "','" + req.body.amount + "','" + req.body.create_date + "') ",
                     [], function (err, result) {
                         console.log("EXECUTE");
                         if (err) {
@@ -187,7 +186,7 @@ app.post("/remoteproductcart", cors(), function (req, res) {
             host: "localhost",
             user: "root",
             password: "123",
-            database: "web_sell_db"
+            database: "sells_db"
         });
     con.connect(function (err) {
         if (err) {
@@ -223,6 +222,181 @@ app.post("/remoteproductcart", cors(), function (req, res) {
     })
 })
 
+app.post("/payment", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        {
+            host: "localhost",
+            user: "root",
+            password: "123",
+            database: "sells_db"
+        });
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("INSERT INTO `payment`(`id_pay`,`customer_id` ,`cart_id`, `name`, `address`, `phone`,`date_payment`,`amount`,`type_pr_id`) VALUES ('" + req.body.id_pay + "','" + req.body.customer_id + "','" + req.body.cart_id + "','" + req.body.name + "','" + req.body.address + "','" + req.body.phone + "','" + req.body.date_payment + "','" + req.body.amount + "','" + req.body.type_pr_id + "')",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) {
+                                    console.log(err);
+                                    console.log("ERROR !!!");
+                                }
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+app.post("/checkpermissions", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        {
+            host: "localhost",
+            user: "root",
+            password: "123",
+            database: "sells_db"
+        });
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("SELECT * FROM `admin` WHERE username = " + "'" + req.body.username + "'" + "and password=" + "'" + req.body.password + "'",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) {
+                                    console.log(err);
+                                    console.log("ERROR !!!");
+                                }
+                            });
+                            console.log(result)
+
+                            if (result.length == 0) {
+                                res.send(false)
+                            } else {
+                                let newObj = { id: result[0].id }
+                                res.send(newObj)
+                            };
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+app.post("/revenuebymonth", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        {
+            host: "localhost",
+            user: "root",
+            password: "123",
+            database: "sells_db"
+        });
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("SELECT SUBSTRING(date_payment,6,2) date_payment1, SUM(amount) revenue FROM `payment`GROUP BY date_payment1",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) {
+                                    console.log(err);
+                                    console.log("ERROR !!!");
+                                }
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+app.post("/revenuebyproduct", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        {
+            host: "localhost",
+            user: "root",
+            password: "123",
+            database: "sells_db"
+        });
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("SELECT SUM(amount) revenue, type_pr_id FROM `payment` GROUP BY type_pr_id",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) {
+                                    console.log(err);
+                                    console.log("ERROR !!!");
+                                }
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
 // ---------------------------------------------------------------------
 
 app.get("/handbag", cors(), function (req, res) {
@@ -231,7 +405,7 @@ app.get("/handbag", cors(), function (req, res) {
             host: "localhost",
             user: "root",
             password: "123",
-            database: "web_sell_db"
+            database: "sells_db"
         });
     con.connect(function (err) {
         if (err) {
@@ -271,7 +445,7 @@ app.get("/Mensellection", cors(), function (req, res) {
             host: "localhost",
             user: "root",
             password: "123",
-            database: "web_sell_db"
+            database: "sells_db"
         });
     con.connect(function (err) {
         if (err) {
@@ -311,7 +485,7 @@ app.get("/detail", cors(), function (req, res) {
             host: "localhost",
             user: "root",
             password: "123",
-            database: "web_sell_db"
+            database: "sells_db"
         });
     con.connect(function (err) {
         if (err) {
@@ -359,7 +533,7 @@ app.get("/relatedProductList", cors(), function (req, res) {
             host: "localhost",
             user: "root",
             password: "123",
-            database: "web_sell_db"
+            database: "sells_db"
         });
     con.connect(function (err) {
         if (err) {
@@ -407,7 +581,7 @@ app.get("/productMen", cors(), function (req, res) {
             host: "localhost",
             user: "root",
             password: "123",
-            database: "web_sell_db"
+            database: "sells_db"
         });
     con.connect(function (err) {
         if (err) {
@@ -447,7 +621,7 @@ app.get("/productWomen", cors(), function (req, res) {
             host: "localhost",
             user: "root",
             password: "123",
-            database: "web_sell_db"
+            database: "sells_db"
         });
     con.connect(function (err) {
         if (err) {
@@ -487,7 +661,7 @@ app.get("/searchproduct", cors(), function (req, res) {
             host: "localhost",
             user: "root",
             password: "123",
-            database: "web_sell_db"
+            database: "sells_db"
         });
     con.connect(function (err) {
         if (err) {
@@ -528,7 +702,7 @@ app.get("/showcart", cors(), function (req, res) {
             host: "localhost",
             user: "root",
             password: "123",
-            database: "web_sell_db"
+            database: "sells_db"
         });
     con.connect(function (err) {
         if (err) {
@@ -568,7 +742,7 @@ app.post("/countcart", cors(), function (req, res) {
             host: "localhost",
             user: "root",
             password: "123",
-            database: "web_sell_db"
+            database: "sells_db"
         });
     con.connect(function (err) {
         if (err) {

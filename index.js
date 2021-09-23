@@ -331,7 +331,7 @@ app.post("/revenuebymonth", cors(), function (req, res) {
                 "------------------------------ !!! Connect Success !!!------------------------------"
             );
             try {
-                con.query("SELECT SUBSTRING(date_payment,6,2) date_payment1, SUM(amount) revenue FROM `payment`GROUP BY date_payment1",
+                con.query("SELECT SUBSTRING(date_payment,7,1) date_payment1, SUM(amount) revenue FROM `payment`GROUP BY date_payment1",
                     [], function (err, result) {
                         console.log("EXECUTE");
                         if (err) {

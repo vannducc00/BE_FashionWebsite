@@ -4,9 +4,44 @@ const app = express();
 const mysql = require("mysql");
 const cors = require("cors")
 
-// ----------------------------------- POST ----------------------------------
 app.use(express.json())
 app.use(cors());
+
+app.post("/allproduct", cors(), function (req, res) {
+    console.log(req);
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------Connect Success!!!!!!!!------------------------------"
+            );
+            try {
+                con.query("SELECT * FROM `product`",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                            res.send(result);
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+});
 
 app.post("/signup", cors(), function (req, res) {
     const con = mysql.createConnection(
@@ -596,7 +631,9 @@ app.post("/countcart", cors(), function (req, res) {
                                 if (err) console.log(err);
                                 console.log("Connect Closed");
                             });
-                            res.send(result)
+                            let lastResult
+                            result.map(item => lastResult = item)
+                            res.send(lastResult)
                         }
                     });
             } catch (err) {

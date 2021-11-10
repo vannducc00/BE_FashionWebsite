@@ -118,8 +118,7 @@ app.post("/checksignup", cors(), function (req, res) {
 });
 
 app.post("/checksignin", cors(), function (req, res) {
-    const con = mysql.createConnection(
-        connectdatabase.root);
+    const con = mysql.createConnection(connectdatabase.root);
     con.connect(function (err) {
         if (err) {
             error = err;
@@ -142,13 +141,11 @@ app.post("/checksignin", cors(), function (req, res) {
                                 if (err) console.log(err);
                                 console.log("-------------------- Connect Closed --------------------");
                             });
-
-                            console.log(result);
-
                             if (result.length == 0) {
                                 res.send(false)
                             } else {
-                                let newObj = { id: result[0].id }
+                                console.log(result);
+                                let newObj = { id: result[0].id, username: result[0].user_name }
                                 res.send(newObj)
                             };
                         }
@@ -297,12 +294,16 @@ app.post("/checkpermissions", cors(), function (req, res) {
                                     console.log("ERROR !!!");
                                 }
                             });
-                            console.log(result)
 
                             if (result.length == 0) {
                                 res.send(false)
                             } else {
-                                let newObj = { id: result[0].id }
+                                let newObj = {
+                                    id: result[0].id,
+                                    key_check: result[0].key_check,
+                                    message: 'OK',
+                                    responseCode: 200
+                                }
                                 res.send(newObj)
                             };
                         }
@@ -819,7 +820,5 @@ app.get("/showcart", cors(), function (req, res) {
         }
     })
 })
-
-
 
 app.listen(8080);

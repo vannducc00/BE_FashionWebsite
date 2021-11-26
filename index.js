@@ -207,7 +207,9 @@ app.post("/payment", cors(), function (req, res) {
                 "------------------------------ !!! Connect Success !!!------------------------------"
             );
             try {
-                con.query("INSERT INTO `payment`(`id_pay`,`customer_id` ,`cart_id`,`product_id`, `name`, `address`, `phone`,`date_payment`,`amount`,`type_pr_id`) VALUES ('" + req.body.id_pay + "','" + req.body.customer_id + "','" + req.body.cart_id + "','" + req.body.product_id + "','" + req.body.name + "','" + req.body.address + "','" + req.body.phone + "','" + req.body.date_payment + "','" + req.body.amount + "','" + req.body.type_pr_id + "')",
+                con.query("INSERT INTO `payment`(`customer_id`,`product_id`, `name`, `address`, `phone`, `date_payment`, `name_product`, `image`, `quantity`, `amount`,`color`,`size`,`pay_method`,`type_pr_id`)" +
+                    " VALUES ('" + req.body.customer_id + "','" + req.body.product_id + "','" + req.body.name + "','" + req.body.address + "','"
+                    + req.body.phone + "','" + req.body.date_payment + "','" + req.body.name_product + "','" + req.body.image + "','" + req.body.quantity + "','" + req.body.amount + "','" + req.body.color + "','" + req.body.size + "','" + req.body.pay_method + "','" + req.body.typeProduct + "')",
                     [], function (err, result) {
                         console.log("EXECUTE");
                         if (err) {

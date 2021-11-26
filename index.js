@@ -7,42 +7,6 @@ const cors = require("cors")
 app.use(express.json())
 app.use(cors());
 
-app.post("/allproduct", cors(), function (req, res) {
-    console.log(req);
-    const con = mysql.createConnection(
-        connectdatabase.root);
-    con.connect(function (err) {
-        if (err) {
-            error = err;
-            console.log(err);
-            res.send("ERR " + err.message);
-        } else {
-            console.log(
-                "------------------------------Connect Success!!!!!!!!------------------------------"
-            );
-            try {
-                con.query("SELECT * FROM `product`",
-                    [], function (err, result) {
-                        console.log("EXECUTE");
-                        if (err) {
-                            console.log("DONE");
-                            res.send("ERR " + err.message);
-                            return;
-                        } else {
-                            con.end(function (err) {
-                                if (err) console.log(err);
-                                console.log("Connect Closed");
-                            });
-                            res.send(result);
-                        }
-                    });
-            } catch (err) {
-                console.log("ERR: " + err);
-            }
-        }
-    })
-});
-
 app.post("/signup", cors(), function (req, res) {
     const con = mysql.createConnection(
         connectdatabase.root);
@@ -243,7 +207,7 @@ app.post("/payment", cors(), function (req, res) {
                 "------------------------------ !!! Connect Success !!!------------------------------"
             );
             try {
-                con.query("INSERT INTO `payment`(`id_pay`,`customer_id` ,`cart_id`, `name`, `address`, `phone`,`date_payment`,`amount`,`type_pr_id`) VALUES ('" + req.body.id_pay + "','" + req.body.customer_id + "','" + req.body.cart_id + "','" + req.body.name + "','" + req.body.address + "','" + req.body.phone + "','" + req.body.date_payment + "','" + req.body.amount + "','" + req.body.type_pr_id + "')",
+                con.query("INSERT INTO `payment`(`id_pay`,`customer_id` ,`cart_id`,`product_id`, `name`, `address`, `phone`,`date_payment`,`amount`,`type_pr_id`) VALUES ('" + req.body.id_pay + "','" + req.body.customer_id + "','" + req.body.cart_id + "','" + req.body.product_id + "','" + req.body.name + "','" + req.body.address + "','" + req.body.phone + "','" + req.body.date_payment + "','" + req.body.amount + "','" + req.body.type_pr_id + "')",
                     [], function (err, result) {
                         console.log("EXECUTE");
                         if (err) {
@@ -306,80 +270,6 @@ app.post("/checkpermissions", cors(), function (req, res) {
                                 }
                                 res.send(newObj)
                             };
-                        }
-                    });
-            } catch (err) {
-                console.log("ERR: " + err);
-            }
-        }
-    })
-})
-
-app.post("/revenuebymonth", cors(), function (req, res) {
-    const con = mysql.createConnection(
-        connectdatabase.root);
-    con.connect(function (err) {
-        if (err) {
-            error = err;
-            console.log(err);
-            res.send("ERR " + err.message);
-        } else {
-            console.log(
-                "------------------------------ !!! Connect Success !!!------------------------------"
-            );
-            try {
-                con.query("SELECT SUBSTRING(date_payment,6,2) date_payment1, SUM(amount) revenue FROM `payment`GROUP BY date_payment1",
-                    [], function (err, result) {
-                        console.log("EXECUTE");
-                        if (err) {
-                            console.log("DONE");
-                            res.send("ERR " + err.message);
-                            return;
-                        } else {
-                            con.end(function (err) {
-                                if (err) {
-                                    console.log(err);
-                                    console.log("ERROR !!!");
-                                }
-                            });
-                            res.send(result)
-                        }
-                    });
-            } catch (err) {
-                console.log("ERR: " + err);
-            }
-        }
-    })
-})
-
-app.post("/revenuebyproduct", cors(), function (req, res) {
-    const con = mysql.createConnection(
-        connectdatabase.root);
-    con.connect(function (err) {
-        if (err) {
-            error = err;
-            console.log(err);
-            res.send("ERR " + err.message);
-        } else {
-            console.log(
-                "------------------------------ !!! Connect Success !!!------------------------------"
-            );
-            try {
-                con.query("SELECT SUM(amount) revenue, type_pr_id FROM `payment` GROUP BY type_pr_id",
-                    [], function (err, result) {
-                        console.log("EXECUTE");
-                        if (err) {
-                            console.log("DONE");
-                            res.send("ERR " + err.message);
-                            return;
-                        } else {
-                            con.end(function (err) {
-                                if (err) {
-                                    console.log(err);
-                                    console.log("ERROR !!!");
-                                }
-                            });
-                            res.send(result)
                         }
                     });
             } catch (err) {
@@ -821,4 +711,501 @@ app.get("/showcart", cors(), function (req, res) {
     })
 })
 
+// ---------------------------- Thống kê doanh số ----------------------------
+
+app.post("/revenuebymonth", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("SELECT SUBSTRING(date_payment,6,2) date_payment1, SUM(amount) revenue FROM `payment`GROUP BY date_payment1",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) {
+                                    console.log(err);
+                                    console.log("ERROR !!!");
+                                }
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+app.post("/revenuebyproduct", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("SELECT SUM(amount) revenue, type_pr_id FROM `payment` GROUP BY type_pr_id",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) {
+                                    console.log(err);
+                                    console.log("ERROR !!!");
+                                }
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+// ---------------------------- Quản lý tài khoản ----------------------------
+
+app.post("/admin", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("SELECT * FROM `admin`",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+app.post("/addAccountAdmin", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("INSERT INTO `admin` (`name`, `username`, `password`, `key_check`) VALUES ('" + req.body.name + "','" + req.body.username + "','" + req.body.password + "','" + req.body.keycheck + "')",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+app.post("/removeAccount", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("DELETE FROM `admin` WHERE id=" + req.body.id + "",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+app.post("/removeAccountUser", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("DELETE FROM `customer` WHERE id=" + req.body.id + "",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+app.post("/updateAccount", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("UPDATE `admin` SET `name`='" + req.body.name + "',`username`='" + req.body.username + "',`password`='" + req.body.password + "',`key_check`='" + req.body.keycheck + "' WHERE id=" + req.body.id + "",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+app.post("/manage_users", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("SELECT * FROM `customer`",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+// ---------------------------- Quản lý sản phẩm ----------------------------
+
+app.post("/allproduct", cors(), function (req, res) {
+    console.log(req);
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------Connect Success!!!!!!!!------------------------------"
+            );
+            try {
+                con.query("SELECT * FROM `product`",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+
+                            result.map((item, index) => {
+                                if (item.type_gender_id == 1) item.type_gender_id = 'Nam'
+                                if (item.type_gender_id == 2) item.type_gender_id = 'Nữ'
+                                if (item.type_pr_id == 0) item.type_pr_id = 'Áo choàng'
+                                if (item.type_pr_id == 1) item.type_pr_id = 'Áo'
+                                if (item.type_pr_id == 2) item.type_pr_id = 'Quần'
+                                if (item.type_pr_id == 3) item.type_pr_id = 'Giày'
+                                if (item.type_pr_id == 4) item.type_pr_id = 'Túi xách'
+                                if (item.type_pr_id == 5) item.type_pr_id = 'Thắt lưng'
+                                if (item.type_pr_id == 6) item.type_pr_id = 'Balo'
+                                if (item.type_pr_id == 7) item.type_pr_id = 'Jean'
+                            })
+                            res.send(result);
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+});
+
+app.post("/showPr", cors(), function (req, res) {
+    console.log(req);
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------Connect Success!!!!!!!!------------------------------"
+            );
+            try {
+                con.query("SELECT * FROM `product`",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+
+                            result.map((item, index) => {
+                                if (item.type_gender_id == 1) item.type_gender_id = 'Nam'
+                                if (item.type_gender_id == 2) item.type_gender_id = 'Nữ'
+                                if (item.type_pr_id == 0) item.type_pr_id = 'Áo choàng'
+                                if (item.type_pr_id == 1) item.type_pr_id = 'Áo'
+                                if (item.type_pr_id == 2) item.type_pr_id = 'Quần'
+                                if (item.type_pr_id == 3) item.type_pr_id = 'Giày'
+                                if (item.type_pr_id == 4) item.type_pr_id = 'Túi xách'
+                                if (item.type_pr_id == 5) item.type_pr_id = 'Thắt lưng'
+                                if (item.type_pr_id == 6) item.type_pr_id = 'Balo'
+                                if (item.type_pr_id == 7) item.type_pr_id = 'Jean'
+                            })
+                            res.send(result);
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+});
+
+app.post("/create_product", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("INSERT INTO `product`( `name`, `price`, `Image`, `description`, `type_gender_id`, `type_pr_id`) VALUES" +
+                    `('${req.body.name}','${req.body.price}','${req.body.image}','${req.body.desc}','${req.body.gender}','${req.body.typeProduct}')`,
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+app.post("/delete_product", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("DELETE FROM `product` WHERE id=" + req.body.id + "",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+app.post("/update_product", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("UPDATE `product` SET `name`='" + req.body.name + "',`price`='" + req.body.price + "'," +
+                    "`Image`='" + req.body.image + "',`description`='" + req.body.desc + "',`type_gender_id`='" + req.body.gender + "',`type_pr_id`='" + req.body.typeProduct + "' WHERE id = " + req.body.id + " ",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+// ---------------------------- ||| ----------------------------\\
 app.listen(8080);

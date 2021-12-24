@@ -1003,6 +1003,41 @@ app.post("/manage_users", cors(), function (req, res) {
 
 // ---------------------------- Quản lý sản phẩm ----------------------------
 
+app.post("/list_paymen", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("SELECT * FROM `payment`WHERE customer_id=" + req.body.customer_id + "",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
 app.post("/allproduct", cors(), function (req, res) {
     console.log(req);
     const con = mysql.createConnection(
@@ -1187,6 +1222,80 @@ app.post("/update_product", cors(), function (req, res) {
             try {
                 con.query("UPDATE `product` SET `name`='" + req.body.name + "',`price`='" + req.body.price + "'," +
                     "`Image`='" + req.body.image + "',`description`='" + req.body.desc + "',`type_gender_id`='" + req.body.gender + "',`type_pr_id`='" + req.body.typeProduct + "' WHERE id = " + req.body.id + " ",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+app.post("/cancel_order", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                console.log("DELETE FROM `payment` WHERE customer_id=" + req.body.id + "")
+                con.query("DELETE FROM `payment` WHERE customer_id=" + req.body.customer_id + "",
+                    [], function (err, result) {
+                        console.log("EXECUTE");
+                        if (err) {
+                            console.log("DONE");
+                            res.send("ERR " + err.message);
+                            return;
+                        } else {
+                            con.end(function (err) {
+                                if (err) console.log(err);
+                                console.log("Connect Closed");
+                            });
+
+                            res.send(result)
+                        }
+                    });
+            } catch (err) {
+                console.log("ERR: " + err);
+            }
+        }
+    })
+})
+
+
+app.post("/list_payment", cors(), function (req, res) {
+    const con = mysql.createConnection(
+        connectdatabase.root);
+    con.connect(function (err) {
+        if (err) {
+            error = err;
+            console.log(err);
+            res.send("ERR " + err.message);
+        } else {
+            console.log(
+                "------------------------------ !!! Connect Success !!!------------------------------"
+            );
+            try {
+                con.query("SELECT * FROM `payment`",
                     [], function (err, result) {
                         console.log("EXECUTE");
                         if (err) {
